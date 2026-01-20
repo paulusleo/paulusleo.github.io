@@ -9,6 +9,7 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#6366f1">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Celengan Pro">
     <link rel="apple-touch-icon" href="icon-192.png">
@@ -612,7 +613,7 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getDatabase, ref, push, set, onValue, remove } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyAdF4TYoZvdsATfhYONwpCVeGazwUDMTDc",
@@ -630,7 +631,21 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        window.firebaseDB = { database, auth, provider, ref, push, set, onValue, remove, signInWithPopup, signOut };
+        // Handle redirect result untuk mobile compatibility
+        getRedirectResult(auth)
+            .then((result) => {
+                if (result && result.user) {
+                    console.log('✅ Login via redirect successful!');
+                }
+            })
+            .catch((error) => {
+                console.error('❌ Redirect error:', error);
+                if (error.code !== 'auth/cancelled-popup-request') {
+                    alert('Error login: ' + error.message);
+                }
+            });
+
+        window.firebaseDB = { database, auth, provider, ref, push, set, onValue, remove, signInWithRedirect, signOut };
         window.savingsData = [];
         window.currentFilter = 'all';
         window.targetAmount = 10000000;
@@ -649,7 +664,6 @@
                     document.getElementById('userAvatar').src = `https://ui-avatars.com/api/?name=${user.email}&background=6366f1&color=fff`;
                 }
                 
-                // DATA PRIVATE PER USER
                 const userSavingsRef = ref(database, `users/${user.uid}/savings`);
                 onValue(userSavingsRef, (snapshot) => {
                     window.savingsData = [];
@@ -669,7 +683,6 @@
                     window.updateStatistics();
                 });
 
-                // Load target dari localStorage
                 const savedTarget = localStorage.getItem(`target_${user.uid}`);
                 if (savedTarget) {
                     window.targetAmount = parseInt(savedTarget);
@@ -684,74 +697,14 @@
         });
     </script>
 
-    <!-- PWA Installation Script -->
     <script>
-        // PWA Install
-        let deferredPrompt;
-        
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            
-            // Tampilkan prompt setelah 3 detik
-            setTimeout(() => {
-                const installPrompt = document.getElementById('installPrompt');
-                if (installPrompt && !localStorage.getItem('pwa_dismissed')) {
-                    installPrompt.classList.remove('hidden');
-                }
-            }, 3000);
-        });
-        
-        window.installPWA = async function() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                console.log(`User response: ${outcome}`);
-                
-                if (outcome === 'accepted') {
-                    showToast('Berhasil!', 'Aplikasi berhasil diinstall! 🎉');
-                }
-                
-                deferredPrompt = null;
-                document.getElementById('installPrompt').classList.add('hidden');
-            }
-        };
-        
-        window.dismissInstall = function() {
-            document.getElementById('installPrompt').classList.add('hidden');
-            localStorage.setItem('pwa_dismissed', 'true');
-        };
-        
-        // Register Service Worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(reg => {
-                        console.log('✅ Service Worker registered successfully:', reg.scope);
-                    })
-                    .catch(err => {
-                        console.log('❌ Service Worker registration failed:', err);
-                    });
-            });
-        }
-
-        // App installed event
-        window.addEventListener('appinstalled', (evt) => {
-            console.log('✅ PWA installed successfully!');
-            showToast('Terpasang!', 'Celengan Pro sudah terpasang di device kamu! 📱');
-        });
-    </script>
-
-    <script>
+        // Login Function - FIXED untuk mobile
         window.loginWithGoogle = async function() {
             try {
-                const result = await window.firebaseDB.signInWithPopup(
-                    window.firebaseDB.auth,
-                    window.firebaseDB.provider
-                );
-                showToast('Login Berhasil!', `Selamat datang ${result.user.displayName || result.user.email}! 🎉`);
+                // Pakai redirect untuk mobile compatibility (no popup blocking)
+                await window.firebaseDB.auth.signInWithRedirect(window.firebaseDB.provider);
             } catch (error) {
-                console.error('Login error:', error);
+                console.error('❌ Login error:', error);
                 alert('Error login: ' + error.message);
             }
         };
@@ -760,97 +713,97 @@
             if (confirm('Yakin ingin logout?')) {
                 try {
                     await window.firebaseDB.signOut(window.firebaseDB.auth);
-                    showToast('Logout Berhasil', 'Sampai jumpa! 👋');
+                    localStorage.clear();
+                    window.location.reload();
                 } catch (error) {
                     console.error('Logout error:', error);
                 }
             }
         };
 
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('date').valueAsDate = new Date();
-            updateTarget();
-        });
+        document.getElementById('date').valueAsDate = new Date();
 
         document.getElementById('celenganForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            if (!window.currentUser) {
+                alert('Silakan login terlebih dahulu!');
+                return;
+            }
+
             const person = document.querySelector('input[name="person"]:checked').value;
             const amount = parseInt(document.getElementById('amount').value);
             const date = document.getElementById('date').value;
             const category = document.getElementById('category').value;
-            const note = document.getElementById('note').value || '-';
+            const note = document.getElementById('note').value;
 
-            const newData = {
+            const savingData = {
                 person: person,
                 amount: amount,
                 date: date,
                 category: category,
                 note: note,
-                timestamp: new Date().toISOString(),
-                createdBy: window.currentUser.email
+                timestamp: new Date().toISOString()
             };
 
             try {
                 const userSavingsRef = window.firebaseDB.ref(window.firebaseDB.database, `users/${window.currentUser.uid}/savings`);
-                const newRef = window.firebaseDB.push(userSavingsRef);
-                await window.firebaseDB.set(newRef, newData);
+                const newSavingRef = window.firebaseDB.push(userSavingsRef);
+                await window.firebaseDB.set(newSavingRef, savingData);
+
+                showToast('Berhasil Disimpan!', `${person} - Rp ${amount.toLocaleString('id-ID')} tersimpan ke cloud! ☁️`);
                 
                 this.reset();
                 document.getElementById('date').valueAsDate = new Date();
-                document.querySelectorAll('input[name="person"]').forEach(radio => radio.checked = false);
-                
-                showToast('Berhasil Disimpan!', `Tabungan ${person} sebesar Rp ${amount.toLocaleString('id-ID')} telah tersimpan! ☁️✨`);
             } catch (error) {
                 console.error('Error saving data:', error);
-                alert('Gagal menyimpan data: ' + error.message);
+                alert('Error menyimpan data: ' + error.message);
             }
         });
 
         window.renderTable = function() {
-            const tableBody = document.getElementById('tableBody');
-            let filteredData = window.savingsData;
-
-            if (window.currentFilter !== 'all') {
-                filteredData = window.savingsData.filter(item => item.person === window.currentFilter);
-            }
+            const tbody = document.getElementById('tableBody');
+            const filteredData = window.currentFilter === 'all' 
+                ? window.savingsData 
+                : window.savingsData.filter(item => item.person === window.currentFilter);
 
             if (filteredData.length === 0) {
-                tableBody.innerHTML = `
+                tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="px-3 md:px-6 py-12 md:py-16 text-center">
-                            <i class="fas fa-inbox text-gray-300 text-5xl md:text-6xl mb-4"></i>
-                            <p class="text-gray-500 font-bold text-base md:text-lg">Tidak ada data</p>
-                            <p class="text-gray-400 text-xs md:text-sm mt-2">Belum ada transaksi untuk ditampilkan</p>
+                        <td colspan="7" class="px-6 py-16 text-center">
+                            <div class="flex flex-col items-center">
+                                <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
+                                <p class="text-gray-500 font-bold text-lg">Belum ada data tabungan</p>
+                                <p class="text-gray-400 text-sm mt-2">Mulai menabung sekarang! 💰</p>
+                            </div>
                         </td>
                     </tr>
                 `;
-                document.getElementById('showingCount').textContent = '0';
-                document.getElementById('totalCount').textContent = window.savingsData.length;
                 return;
             }
 
-            tableBody.innerHTML = filteredData.map((item, index) => `
-                <tr class="hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-300 cursor-pointer border-b border-gray-100">
-                    <td class="px-3 md:px-6 py-4 md:py-5 text-gray-700 font-black text-sm md:text-base">${index + 1}</td>
-                    <td class="px-3 md:px-6 py-4 md:py-5 text-gray-700 font-semibold text-xs md:text-base whitespace-nowrap">${formatDate(item.date)}</td>
-                    <td class="px-3 md:px-6 py-4 md:py-5">
-                        <div class="flex items-center space-x-2 md:space-x-3">
-                            <div class="w-8 h-8 md:w-10 md:h-10 rounded-full ${item.person === 'Leo' ? 'bg-gradient-to-br from-indigo-100 to-indigo-200' : 'bg-gradient-to-br from-pink-100 to-pink-200'} flex items-center justify-center shadow-lg">
-                                <i class="fas ${item.person === 'Leo' ? 'fa-user-tie text-indigo-600' : 'fa-user text-pink-600'} text-sm md:text-lg"></i>
-                            </div>
-                            <span class="font-black ${item.person === 'Leo' ? 'text-indigo-600' : 'text-pink-600'} text-sm md:text-lg">${item.person}</span>
-                        </div>
+            tbody.innerHTML = filteredData.map((item, index) => `
+                <tr class="hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-300">
+                    <td class="px-3 md:px-6 py-4 md:py-5 whitespace-nowrap text-xs md:text-sm font-bold text-gray-900">${index + 1}</td>
+                    <td class="px-3 md:px-6 py-4 md:py-5 whitespace-nowrap text-xs md:text-sm font-semibold text-gray-700">
+                        <i class="fas fa-calendar-alt text-blue-500 mr-2"></i>${new Date(item.date).toLocaleDateString('id-ID')}
                     </td>
-                    <td class="px-3 md:px-6 py-4 md:py-5">
-                        <span class="px-3 md:px-4 py-1.5 md:py-2 bg-gradient-to-r from-purple-100 to-purple-200 text-purple-700 rounded-full text-xs font-black uppercase tracking-wide shadow-md whitespace-nowrap">${item.category}</span>
+                    <td class="px-3 md:px-6 py-4 md:py-5 whitespace-nowrap">
+                        <span class="px-3 md:px-4 py-1.5 md:py-2 inline-flex text-xs md:text-sm leading-5 font-black rounded-full ${item.person === 'Leo' ? 'bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-800 border-2 border-indigo-300' : 'bg-gradient-to-r from-pink-100 to-rose-100 text-pink-800 border-2 border-pink-300'}">
+                            <i class="fas ${item.person === 'Leo' ? 'fa-user-tie' : 'fa-user'} mr-2"></i>${item.person}
+                        </span>
                     </td>
-                    <td class="px-3 md:px-6 py-4 md:py-5 font-black text-green-600 text-sm md:text-lg whitespace-nowrap">Rp ${item.amount.toLocaleString('id-ID')}</td>
-                    <td class="px-3 md:px-6 py-4 md:py-5 text-gray-600 max-w-xs truncate font-semibold text-sm md:text-base hidden md:table-cell">${item.note}</td>
-                    <td class="px-3 md:px-6 py-4 md:py-5 text-center">
-                        <button onclick="deleteItem('${item.firebaseId}')" 
-                            class="text-red-600 hover:bg-red-50 p-2 md:p-3 rounded-xl transition-all duration-300 hover:shadow-lg">
-                            <i class="fas fa-trash text-base md:text-lg"></i>
+                    <td class="px-3 md:px-6 py-4 md:py-5 whitespace-nowrap text-xs md:text-sm font-semibold text-gray-700">
+                        ${item.category}
+                    </td>
+                    <td class="px-3 md:px-6 py-4 md:py-5 whitespace-nowrap text-xs md:text-sm font-black text-green-600">
+                        <i class="fas fa-rupiah-sign mr-1"></i>Rp ${item.amount.toLocaleString('id-ID')}
+                    </td>
+                    <td class="px-3 md:px-6 py-4 md:py-5 text-xs md:text-sm text-gray-600 font-medium hidden md:table-cell">${item.note || '-'}</td>
+                    <td class="px-3 md:px-6 py-4 md:py-5 whitespace-nowrap text-center text-xs md:text-sm font-medium">
+                        <button onclick="deleteEntry('${item.firebaseId}')" 
+                            class="bg-gradient-to-r from-red-600 to-rose-600 text-white font-bold px-3 md:px-5 py-2 md:py-2.5 rounded-xl hover:from-red-700 hover:to-rose-700 transition-all duration-300 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-trash"></i>
                         </button>
                     </td>
                 </tr>
@@ -861,45 +814,36 @@
         };
 
         window.updateStatistics = function() {
-            const totalLeo = window.savingsData.filter(i => i.person === 'Leo').reduce((sum, i) => sum + i.amount, 0);
-            const totalVanessa = window.savingsData.filter(i => i.person === 'Vanessa').reduce((sum, i) => sum + i.amount, 0);
-            const totalAll = totalLeo + totalVanessa;
+            const totalAll = window.savingsData.reduce((sum, item) => sum + item.amount, 0);
+            const leoData = window.savingsData.filter(item => item.person === 'Leo');
+            const vanessaData = window.savingsData.filter(item => item.person === 'Vanessa');
+            const totalLeo = leoData.reduce((sum, item) => sum + item.amount, 0);
+            const totalVanessa = vanessaData.reduce((sum, item) => sum + item.amount, 0);
 
-            const leoCount = window.savingsData.filter(i => i.person === 'Leo').length;
-            const vanessaCount = window.savingsData.filter(i => i.person === 'Vanessa').length;
-
+            document.getElementById('totalAll').textContent = `Rp ${totalAll.toLocaleString('id-ID')}`;
             document.getElementById('totalLeo').textContent = `Rp ${totalLeo.toLocaleString('id-ID')}`;
             document.getElementById('totalVanessa').textContent = `Rp ${totalVanessa.toLocaleString('id-ID')}`;
-            document.getElementById('totalAll').textContent = `Rp ${totalAll.toLocaleString('id-ID')}`;
-            
-            document.getElementById('leoCount').textContent = `${leoCount} transaksi`;
-            document.getElementById('vanessaCount').textContent = `${vanessaCount} transaksi`;
             document.getElementById('totalEntries').textContent = `${window.savingsData.length} transaksi`;
+            document.getElementById('leoCount').textContent = `${leoData.length} transaksi`;
+            document.getElementById('vanessaCount').textContent = `${vanessaData.length} transaksi`;
 
             const progress = Math.min((totalAll / window.targetAmount) * 100, 100);
             document.getElementById('targetProgress').textContent = `${progress.toFixed(1)}%`;
             document.getElementById('progressBar').style.width = `${progress}%`;
 
-            updateMonthlySummary();
-        };
-
-        function updateMonthlySummary() {
             const currentMonth = new Date().getMonth();
             const currentYear = new Date().getFullYear();
-            
             const monthlyData = window.savingsData.filter(item => {
                 const itemDate = new Date(item.date);
                 return itemDate.getMonth() === currentMonth && itemDate.getFullYear() === currentYear;
             });
-
             const monthlyTotal = monthlyData.reduce((sum, item) => sum + item.amount, 0);
-            const monthlyCount = monthlyData.length;
-            const monthlyAvg = monthlyCount > 0 ? monthlyTotal / monthlyCount : 0;
+            const monthlyAvg = monthlyData.length > 0 ? monthlyTotal / monthlyData.length : 0;
 
             document.getElementById('monthlyTotal').textContent = `Rp ${monthlyTotal.toLocaleString('id-ID')}`;
-            document.getElementById('monthlyCount').textContent = monthlyCount;
+            document.getElementById('monthlyCount').textContent = monthlyData.length;
             document.getElementById('monthlyAvg').textContent = `Rp ${Math.round(monthlyAvg).toLocaleString('id-ID')}`;
-        }
+        };
 
         window.filterData = function(filter) {
             window.currentFilter = filter;
@@ -910,131 +854,135 @@
             });
 
             const activeBtn = document.getElementById(`filter${filter.charAt(0).toUpperCase() + filter.slice(1)}`);
-            activeBtn.classList.remove('bg-gray-200', 'text-gray-700', 'shadow-md');
-            activeBtn.classList.add('bg-gradient-to-r', 'from-indigo-600', 'to-purple-600', 'text-white', 'shadow-lg');
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-gray-200', 'text-gray-700', 'shadow-md');
+                activeBtn.classList.add('bg-gradient-to-r', 'from-indigo-600', 'to-purple-600', 'text-white', 'shadow-lg');
+            }
 
             window.renderTable();
         };
 
         window.searchTable = function() {
             const input = document.getElementById('searchInput').value.toLowerCase();
-            const rows = document.querySelectorAll('#tableBody tr');
-
-            rows.forEach(row => {
+            const rows = document.getElementById('tableBody').getElementsByTagName('tr');
+            
+            Array.from(rows).forEach(row => {
                 const text = row.textContent.toLowerCase();
                 row.style.display = text.includes(input) ? '' : 'none';
             });
         };
 
-        window.deleteItem = async function(firebaseId) {
-            if (confirm('⚠️ Yakin ingin menghapus transaksi ini?')) {
-                try {
-                    const itemRef = window.firebaseDB.ref(window.firebaseDB.database, `users/${window.currentUser.uid}/savings/${firebaseId}`);
-                    await window.firebaseDB.remove(itemRef);
-                    showToast('Terhapus!', 'Transaksi berhasil dihapus 🗑️');
-                } catch (error) {
-                    console.error('Error deleting data:', error);
-                    alert('Gagal menghapus data: ' + error.message);
-                }
+        window.deleteEntry = async function(firebaseId) {
+            if (!confirm('Yakin ingin menghapus data ini?')) return;
+
+            try {
+                const entryRef = window.firebaseDB.ref(window.firebaseDB.database, `users/${window.currentUser.uid}/savings/${firebaseId}`);
+                await window.firebaseDB.remove(entryRef);
+                showToast('Data Dihapus!', 'Transaksi berhasil dihapus dari cloud 🗑️');
+            } catch (error) {
+                console.error('Error deleting:', error);
+                alert('Error menghapus data: ' + error.message);
             }
         };
 
         window.clearAllData = async function() {
-            if (confirm('⚠️ Yakin ingin menghapus SEMUA data? Tindakan ini tidak dapat dibatalkan!')) {
-                if (confirm('⚠️ Konfirmasi sekali lagi: Hapus semua data ANDA?')) {
-                    try {
-                        const userSavingsRef = window.firebaseDB.ref(window.firebaseDB.database, `users/${window.currentUser.uid}/savings`);
-                        await window.firebaseDB.set(userSavingsRef, null);
-                        showToast('Data Dibersihkan!', 'Semua data Anda telah dihapus 🧹');
-                    } catch (error) {
-                        console.error('Error clearing data:', error);
-                        alert('Gagal menghapus data: ' + error.message);
-                    }
-                }
+            if (!confirm('⚠️ PERINGATAN!\n\nIni akan menghapus SEMUA data tabungan Anda!\n\nYakin ingin melanjutkan?')) return;
+            if (!confirm('Konfirmasi terakhir: Data yang sudah dihapus TIDAK bisa dikembalikan!')) return;
+
+            try {
+                const userSavingsRef = window.firebaseDB.ref(window.firebaseDB.database, `users/${window.currentUser.uid}/savings`);
+                await window.firebaseDB.set(userSavingsRef, null);
+                showToast('Semua Data Dihapus!', 'Database telah dikosongkan 🗑️');
+            } catch (error) {
+                console.error('Error clearing data:', error);
+                alert('Error menghapus data: ' + error.message);
             }
         };
 
+        window.exportToExcel = function() {
+            if (window.savingsData.length === 0) {
+                alert('Tidak ada data untuk di-export!');
+                return;
+            }
+
+            const exportData = window.savingsData.map((item, index) => ({
+                'No': index + 1,
+                'Tanggal': new Date(item.date).toLocaleDateString('id-ID'),
+                'Nama': item.person,
+                'Kategori': item.category,
+                'Jumlah': item.amount,
+                'Keterangan': item.note || '-'
+            }));
+
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Celengan');
+
+            const filename = `Celengan_${window.currentUser.email.split('@')[0]}_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, filename);
+
+            showToast('Export Berhasil!', `File ${filename} berhasil diunduh 📥`);
+        };
+
         window.updateTarget = function() {
-            window.targetAmount = parseInt(document.getElementById('targetAmount').value);
-            document.getElementById('targetDisplay').textContent = `Rp ${window.targetAmount.toLocaleString('id-ID')}`;
+            const target = parseInt(document.getElementById('targetAmount').value);
+            window.targetAmount = target;
+            document.getElementById('targetDisplay').textContent = `Rp ${target.toLocaleString('id-ID')}`;
             
-            // Simpan target ke localStorage
             if (window.currentUser) {
-                localStorage.setItem(`target_${window.currentUser.uid}`, window.targetAmount);
+                localStorage.setItem(`target_${window.currentUser.uid}`, target);
             }
             
             window.updateStatistics();
         };
 
-        window.exportToExcel = function() {
-            if (window.savingsData.length === 0) {
-                alert('⚠️ Belum ada data untuk diexport!');
-                return;
-            }
+        window.showToast = function(title, message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastTitle').textContent = title;
+            document.getElementById('toastMessage').textContent = message;
+            
+            toast.classList.remove('hidden', 'translate-y-32');
+            toast.classList.add('translate-y-0');
 
-            const excelData = [
-                ["LAPORAN CELENGAN PRIBADI"],
-                [`User: ${window.currentUser.email}`],
-                [`Diekspor pada: ${new Date().toLocaleString('id-ID')}`],
-                [],
-                ["No", "Tanggal", "Nama", "Kategori", "Jumlah (Rp)", "Keterangan"]
-            ];
-
-            window.savingsData.forEach((item, index) => {
-                excelData.push([
-                    index + 1,
-                    item.date,
-                    item.person,
-                    item.category,
-                    item.amount,
-                    item.note
-                ]);
-            });
-
-            excelData.push([]);
-            excelData.push(["RINGKASAN"]);
-            excelData.push(["Total Leo", "", "", "", window.savingsData.filter(i => i.person === 'Leo').reduce((s, i) => s + i.amount, 0)]);
-            excelData.push(["Total Vanessa", "", "", "", window.savingsData.filter(i => i.person === 'Vanessa').reduce((s, i) => s + i.amount, 0)]);
-            excelData.push(["TOTAL KESELURUHAN", "", "", "", window.savingsData.reduce((s, i) => s + i.amount, 0)]);
-
-            const ws = XLSX.utils.aoa_to_sheet(excelData);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Celengan");
-
-            const fileName = `Celengan_${window.currentUser.email.split('@')[0]}_${new Date().toISOString().split('T')[0]}.xlsx`;
-            XLSX.writeFile(wb, fileName);
-
-            showToast('Export Berhasil!', `File ${fileName} telah didownload 📥`);
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0');
+                toast.classList.add('translate-y-32');
+                setTimeout(() => toast.classList.add('hidden'), 500);
+            }, 3000);
         };
 
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('id-ID', { 
-                day: '2-digit', 
-                month: 'short', 
-                year: 'numeric' 
-            });
-        }
+        // PWA Install Prompt
+        let deferredPrompt;
 
-        function showToast(title, message) {
-            const toast = document.getElementById('toast');
-            const toastTitle = document.getElementById('toastTitle');
-            const toastMessage = document.getElementById('toastMessage');
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').classList.remove('hidden');
+        });
 
-            toastTitle.textContent = title;
-            toastMessage.textContent = message;
+        window.installPWA = async function() {
+            if (!deferredPrompt) return;
 
-            toast.classList.remove('hidden');
-            setTimeout(() => {
-                toast.style.transform = 'translateY(0)';
-            }, 100);
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
 
-            setTimeout(() => {
-                toast.style.transform = 'translateY(200px)';
-                setTimeout(() => {
-                    toast.classList.add('hidden');
-                }, 500);
-            }, 4000);
+            if (outcome === 'accepted') {
+                showToast('Terima Kasih!', 'Aplikasi berhasil di-install! 🎉');
+            }
+
+            deferredPrompt = null;
+            document.getElementById('installPrompt').classList.add('hidden');
+        };
+
+        window.dismissInstall = function() {
+            document.getElementById('installPrompt').classList.add('hidden');
+        };
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => console.log('✅ Service Worker registered:', registration))
+                .catch(error => console.log('❌ Service Worker registration failed:', error));
         }
     </script>
 </body>
