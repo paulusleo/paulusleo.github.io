@@ -4,6 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Celengan Pro - Leo & Vanessa Savings Tracker</title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Celengan Pro">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <meta name="description" content="Aplikasi pencatat tabungan pribadi dengan real-time sync dan keamanan tinggi">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -64,6 +78,15 @@
             from { transform: translateX(-100%); }
             to { transform: translateX(0); }
         }
+
+        .animate-slide-up {
+            animation: slideUp 0.5s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
         
         .online-pulse {
             animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
@@ -72,18 +95,6 @@
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
-        }
-        
-        .gradient-border {
-            position: relative;
-            border-radius: 1rem;
-            padding: 2px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        
-        .gradient-border-content {
-            background: white;
-            border-radius: 0.9rem;
         }
         
         .hover-scale {
@@ -167,15 +178,15 @@
             <div class="absolute w-72 h-72 bg-purple-500/20 rounded-full blur-3xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 animate-pulse" style="animation-delay: 2s;"></div>
         </div>
         
-        <div class="glass-effect rounded-3xl p-12 max-w-md w-full shadow-2xl animate-fade-in relative z-10 border border-white/20">
+        <div class="glass-effect rounded-3xl p-8 md:p-12 max-w-md w-full shadow-2xl animate-fade-in relative z-10 border border-white/20">
             <div class="text-center mb-10">
-                <div class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl floating">
-                    <i class="fas fa-piggy-bank text-white text-5xl"></i>
+                <div class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 w-20 h-20 md:w-24 md:h-24 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl floating">
+                    <i class="fas fa-piggy-bank text-white text-4xl md:text-5xl"></i>
                 </div>
-                <h1 class="text-4xl font-black text-gray-800 mb-3 bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text text-transparent">
+                <h1 class="text-3xl md:text-4xl font-black text-gray-800 mb-3 bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text text-transparent">
                     Celengan Pro
                 </h1>
-                <p class="text-gray-600 text-lg font-medium">Sistem Tabungan Leo & Vanessa</p>
+                <p class="text-gray-600 text-base md:text-lg font-medium">Sistem Tabungan Leo & Vanessa</p>
                 <div class="mt-4 flex items-center justify-center space-x-2">
                     <div class="w-2 h-2 bg-green-500 rounded-full online-pulse"></div>
                     <span class="text-sm text-gray-500 font-medium">🔒 Private & Secure</span>
@@ -183,9 +194,9 @@
             </div>
 
             <button onclick="loginWithGoogle()" 
-                class="w-full bg-white border-2 border-gray-300 text-gray-700 font-bold py-5 px-6 rounded-2xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center space-x-3 mb-6 group">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-7 h-7 group-hover:scale-110 transition-transform" alt="Google">
-                <span class="text-lg">Login dengan Google</span>
+                class="w-full bg-white border-2 border-gray-300 text-gray-700 font-bold py-4 md:py-5 px-6 rounded-2xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center space-x-3 mb-6 group">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-6 h-6 md:w-7 md:h-7 group-hover:scale-110 transition-transform" alt="Google">
+                <span class="text-base md:text-lg">Login dengan Google</span>
             </button>
 
             <div class="mt-8 pt-8 border-t border-gray-200">
@@ -200,7 +211,7 @@
             </div>
 
             <div class="mt-6">
-                <div class="flex items-center justify-center space-x-4 text-gray-400 text-sm">
+                <div class="flex items-center justify-center space-x-3 md:space-x-4 text-gray-400 text-xs md:text-sm">
                     <div class="flex items-center space-x-2">
                         <i class="fas fa-shield-alt"></i>
                         <span>Secure</span>
@@ -212,8 +223,8 @@
                     </div>
                     <div class="w-1 h-1 bg-gray-400 rounded-full"></div>
                     <div class="flex items-center space-x-2">
-                        <i class="fas fa-lock"></i>
-                        <span>Encrypted</span>
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>PWA</span>
                     </div>
                 </div>
             </div>
@@ -225,31 +236,31 @@
         <!-- Navigation -->
         <nav class="glass-effect border-b border-white/10 sticky top-0 z-50 shadow-lg">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-20">
-                    <div class="flex items-center space-x-4">
-                        <div class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 p-3 rounded-2xl shadow-lg">
-                            <i class="fas fa-piggy-bank text-white text-2xl"></i>
+                <div class="flex justify-between items-center h-16 md:h-20">
+                    <div class="flex items-center space-x-3 md:space-x-4">
+                        <div class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 p-2 md:p-3 rounded-2xl shadow-lg">
+                            <i class="fas fa-piggy-bank text-white text-xl md:text-2xl"></i>
                         </div>
                         <div>
-                            <h1 class="text-2xl font-black text-gray-800">Celengan Pro</h1>
-                            <p class="text-sm text-gray-500 flex items-center">
+                            <h1 class="text-lg md:text-2xl font-black text-gray-800">Celengan Pro</h1>
+                            <p class="text-xs md:text-sm text-gray-500 flex items-center">
                                 <span class="w-2 h-2 bg-green-500 rounded-full mr-2 online-pulse"></span>
-                                <span class="font-semibold">Logged in as</span>
+                                <span class="font-semibold hidden sm:inline">Logged in as</span>
                                 <span id="userName" class="ml-1 text-indigo-600 font-bold"></span>
                             </p>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-4">
-                        <div class="hidden md:flex items-center space-x-2 bg-green-100 rounded-full px-5 py-2.5 border border-green-200">
-                            <i class="fas fa-lock text-green-600 text-lg"></i>
-                            <span class="text-sm font-bold text-green-700">Private Data</span>
+                    <div class="flex items-center space-x-2 md:space-x-4">
+                        <div class="hidden md:flex items-center space-x-2 bg-green-100 rounded-full px-4 md:px-5 py-2 md:py-2.5 border border-green-200">
+                            <i class="fas fa-lock text-green-600 text-sm md:text-lg"></i>
+                            <span class="text-xs md:text-sm font-bold text-green-700">Private</span>
                         </div>
-                        <div class="hidden md:flex items-center space-x-3">
-                            <img id="userAvatar" class="w-12 h-12 rounded-full border-3 border-indigo-600 shadow-lg" alt="User">
-                            <span class="text-sm font-semibold text-gray-700" id="userEmail"></span>
+                        <div class="hidden lg:flex items-center space-x-3">
+                            <img id="userAvatar" class="w-10 h-10 md:w-12 md:h-12 rounded-full border-3 border-indigo-600 shadow-lg" alt="User">
+                            <span class="text-xs md:text-sm font-semibold text-gray-700" id="userEmail"></span>
                         </div>
                         <button onclick="logout()" 
-                            class="bg-gradient-to-r from-red-600 to-red-700 text-white font-bold py-3 px-6 rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center space-x-2">
+                            class="bg-gradient-to-r from-red-600 to-red-700 text-white font-bold py-2 md:py-3 px-4 md:px-6 rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center space-x-2">
                             <i class="fas fa-sign-out-alt"></i>
                             <span class="hidden md:inline">Logout</span>
                         </button>
@@ -258,111 +269,111 @@
             </div>
         </nav>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
             
             <!-- Statistics Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-10">
                 <!-- Total Card -->
-                <div class="glass-effect rounded-3xl p-8 border border-white/20 shadow-2xl animate-fade-in hover-scale stat-card">
-                    <div class="flex items-center justify-between mb-5">
-                        <div class="bg-gradient-to-br from-blue-500 to-cyan-500 p-4 rounded-2xl shadow-xl">
-                            <i class="fas fa-wallet text-white text-3xl"></i>
+                <div class="glass-effect rounded-2xl md:rounded-3xl p-6 md:p-8 border border-white/20 shadow-2xl animate-fade-in hover-scale stat-card">
+                    <div class="flex items-center justify-between mb-4 md:mb-5">
+                        <div class="bg-gradient-to-br from-blue-500 to-cyan-500 p-3 md:p-4 rounded-2xl shadow-xl">
+                            <i class="fas fa-wallet text-white text-2xl md:text-3xl"></i>
                         </div>
-                        <span class="text-xs font-black text-blue-600 bg-blue-100 px-4 py-2 rounded-full border border-blue-200">TOTAL</span>
+                        <span class="text-xs font-black text-blue-600 bg-blue-100 px-3 md:px-4 py-1.5 md:py-2 rounded-full border border-blue-200">TOTAL</span>
                     </div>
-                    <h3 class="text-gray-600 text-sm font-bold mb-2 uppercase tracking-wide">Total Keseluruhan</h3>
-                    <p class="text-4xl font-black text-gray-800 mb-4" id="totalAll">Rp 0</p>
-                    <div class="flex items-center text-sm pt-3 border-t border-gray-200">
-                        <i class="fas fa-chart-line text-green-500 mr-2 text-lg"></i>
+                    <h3 class="text-gray-600 text-xs md:text-sm font-bold mb-2 uppercase tracking-wide">Total Keseluruhan</h3>
+                    <p class="text-2xl md:text-4xl font-black text-gray-800 mb-3 md:mb-4" id="totalAll">Rp 0</p>
+                    <div class="flex items-center text-xs md:text-sm pt-3 border-t border-gray-200">
+                        <i class="fas fa-chart-line text-green-500 mr-2 text-base md:text-lg"></i>
                         <span class="text-gray-600 font-semibold" id="totalEntries">0 transaksi</span>
                     </div>
                 </div>
 
                 <!-- Leo Card -->
-                <div class="glass-effect rounded-3xl p-8 border border-white/20 shadow-2xl animate-fade-in hover-scale stat-card" style="animation-delay: 0.1s">
-                    <div class="flex items-center justify-between mb-5">
-                        <div class="bg-gradient-to-br from-indigo-500 to-purple-600 p-4 rounded-2xl shadow-xl">
-                            <i class="fas fa-user-tie text-white text-3xl"></i>
+                <div class="glass-effect rounded-2xl md:rounded-3xl p-6 md:p-8 border border-white/20 shadow-2xl animate-fade-in hover-scale stat-card" style="animation-delay: 0.1s">
+                    <div class="flex items-center justify-between mb-4 md:mb-5">
+                        <div class="bg-gradient-to-br from-indigo-500 to-purple-600 p-3 md:p-4 rounded-2xl shadow-xl">
+                            <i class="fas fa-user-tie text-white text-2xl md:text-3xl"></i>
                         </div>
-                        <span class="text-xs font-black text-indigo-600 bg-indigo-100 px-4 py-2 rounded-full border border-indigo-200">LEO</span>
+                        <span class="text-xs font-black text-indigo-600 bg-indigo-100 px-3 md:px-4 py-1.5 md:py-2 rounded-full border border-indigo-200">LEO</span>
                     </div>
-                    <h3 class="text-gray-600 text-sm font-bold mb-2 uppercase tracking-wide">Total Leo</h3>
-                    <p class="text-4xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4" id="totalLeo">Rp 0</p>
-                    <div class="flex items-center text-sm pt-3 border-t border-gray-200">
-                        <i class="fas fa-arrow-up text-green-500 mr-2 text-lg"></i>
+                    <h3 class="text-gray-600 text-xs md:text-sm font-bold mb-2 uppercase tracking-wide">Total Leo</h3>
+                    <p class="text-2xl md:text-4xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-3 md:mb-4" id="totalLeo">Rp 0</p>
+                    <div class="flex items-center text-xs md:text-sm pt-3 border-t border-gray-200">
+                        <i class="fas fa-arrow-up text-green-500 mr-2 text-base md:text-lg"></i>
                         <span class="text-gray-600 font-semibold" id="leoCount">0 transaksi</span>
                     </div>
                 </div>
 
                 <!-- Vanessa Card -->
-                <div class="glass-effect rounded-3xl p-8 border border-white/20 shadow-2xl animate-fade-in hover-scale stat-card" style="animation-delay: 0.2s">
-                    <div class="flex items-center justify-between mb-5">
-                        <div class="bg-gradient-to-br from-pink-500 to-rose-600 p-4 rounded-2xl shadow-xl">
-                            <i class="fas fa-user text-white text-3xl"></i>
+                <div class="glass-effect rounded-2xl md:rounded-3xl p-6 md:p-8 border border-white/20 shadow-2xl animate-fade-in hover-scale stat-card" style="animation-delay: 0.2s">
+                    <div class="flex items-center justify-between mb-4 md:mb-5">
+                        <div class="bg-gradient-to-br from-pink-500 to-rose-600 p-3 md:p-4 rounded-2xl shadow-xl">
+                            <i class="fas fa-user text-white text-2xl md:text-3xl"></i>
                         </div>
-                        <span class="text-xs font-black text-pink-600 bg-pink-100 px-4 py-2 rounded-full border border-pink-200">VANESSA</span>
+                        <span class="text-xs font-black text-pink-600 bg-pink-100 px-3 md:px-4 py-1.5 md:py-2 rounded-full border border-pink-200">VANESSA</span>
                     </div>
-                    <h3 class="text-gray-600 text-sm font-bold mb-2 uppercase tracking-wide">Total Vanessa</h3>
-                    <p class="text-4xl font-black bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent mb-4" id="totalVanessa">Rp 0</p>
-                    <div class="flex items-center text-sm pt-3 border-t border-gray-200">
-                        <i class="fas fa-arrow-up text-green-500 mr-2 text-lg"></i>
+                    <h3 class="text-gray-600 text-xs md:text-sm font-bold mb-2 uppercase tracking-wide">Total Vanessa</h3>
+                    <p class="text-2xl md:text-4xl font-black bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent mb-3 md:mb-4" id="totalVanessa">Rp 0</p>
+                    <div class="flex items-center text-xs md:text-sm pt-3 border-t border-gray-200">
+                        <i class="fas fa-arrow-up text-green-500 mr-2 text-base md:text-lg"></i>
                         <span class="text-gray-600 font-semibold" id="vanessaCount">0 transaksi</span>
                     </div>
                 </div>
 
                 <!-- Target Card -->
-                <div class="glass-effect rounded-3xl p-8 border border-white/20 shadow-2xl animate-fade-in hover-scale stat-card" style="animation-delay: 0.3s">
-                    <div class="flex items-center justify-between mb-5">
-                        <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-4 rounded-2xl shadow-xl">
-                            <i class="fas fa-bullseye text-white text-3xl"></i>
+                <div class="glass-effect rounded-2xl md:rounded-3xl p-6 md:p-8 border border-white/20 shadow-2xl animate-fade-in hover-scale stat-card" style="animation-delay: 0.3s">
+                    <div class="flex items-center justify-between mb-4 md:mb-5">
+                        <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-3 md:p-4 rounded-2xl shadow-xl">
+                            <i class="fas fa-bullseye text-white text-2xl md:text-3xl"></i>
                         </div>
-                        <span class="text-xs font-black text-emerald-600 bg-emerald-100 px-4 py-2 rounded-full border border-emerald-200">TARGET</span>
+                        <span class="text-xs font-black text-emerald-600 bg-emerald-100 px-3 md:px-4 py-1.5 md:py-2 rounded-full border border-emerald-200">TARGET</span>
                     </div>
-                    <h3 class="text-gray-600 text-sm font-bold mb-2 uppercase tracking-wide">Progress Target</h3>
-                    <p class="text-4xl font-black text-gray-800 mb-4" id="targetProgress">0%</p>
+                    <h3 class="text-gray-600 text-xs md:text-sm font-bold mb-2 uppercase tracking-wide">Progress Target</h3>
+                    <p class="text-2xl md:text-4xl font-black text-gray-800 mb-3 md:mb-4" id="targetProgress">0%</p>
                     <div class="pt-3 border-t border-gray-200">
-                        <div class="w-full bg-gray-200 rounded-full h-3 shadow-inner">
-                            <div class="bg-gradient-to-r from-emerald-500 to-teal-500 h-3 rounded-full transition-all duration-1000 shadow-lg" id="progressBar" style="width: 0%"></div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 md:h-3 shadow-inner">
+                            <div class="bg-gradient-to-r from-emerald-500 to-teal-500 h-2 md:h-3 rounded-full transition-all duration-1000 shadow-lg" id="progressBar" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
                 
                 <!-- Form Section -->
-                <div class="lg:col-span-1 space-y-6">
+                <div class="lg:col-span-1 space-y-4 md:space-y-6">
                     
                     <!-- Input Form -->
-                    <div class="glass-effect rounded-3xl p-8 border border-white/20 shadow-2xl animate-fade-in">
-                        <div class="flex items-center mb-8">
-                            <div class="bg-gradient-to-br from-indigo-600 to-pink-600 p-3 rounded-xl mr-4 shadow-lg">
-                                <i class="fas fa-plus text-white text-xl"></i>
+                    <div class="glass-effect rounded-2xl md:rounded-3xl p-6 md:p-8 border border-white/20 shadow-2xl animate-fade-in">
+                        <div class="flex items-center mb-6 md:mb-8">
+                            <div class="bg-gradient-to-br from-indigo-600 to-pink-600 p-2.5 md:p-3 rounded-xl mr-3 md:mr-4 shadow-lg">
+                                <i class="fas fa-plus text-white text-lg md:text-xl"></i>
                             </div>
-                            <h2 class="text-2xl font-black text-gray-800">Tambah Tabungan</h2>
+                            <h2 class="text-xl md:text-2xl font-black text-gray-800">Tambah Tabungan</h2>
                         </div>
                         
-                        <form id="celenganForm" class="space-y-6">
+                        <form id="celenganForm" class="space-y-4 md:space-y-6">
                             <div>
-                                <label class="block text-sm font-black text-gray-700 mb-3 uppercase tracking-wide">
+                                <label class="block text-xs md:text-sm font-black text-gray-700 mb-2 md:mb-3 uppercase tracking-wide">
                                     <i class="fas fa-user mr-2 text-indigo-600"></i>Nama
                                 </label>
-                                <div class="grid grid-cols-2 gap-4">
+                                <div class="grid grid-cols-2 gap-3 md:gap-4">
                                     <label class="relative cursor-pointer">
                                         <input type="radio" name="person" value="Leo" required class="peer sr-only">
-                                        <div class="peer-checked:border-indigo-600 peer-checked:bg-gradient-to-br peer-checked:from-indigo-50 peer-checked:to-indigo-100 border-3 border-gray-200 rounded-2xl p-6 transition-all duration-300 hover:border-indigo-300 hover:shadow-lg">
+                                        <div class="peer-checked:border-indigo-600 peer-checked:bg-gradient-to-br peer-checked:from-indigo-50 peer-checked:to-indigo-100 border-3 border-gray-200 rounded-xl md:rounded-2xl p-4 md:p-6 transition-all duration-300 hover:border-indigo-300 hover:shadow-lg">
                                             <div class="flex flex-col items-center">
-                                                <i class="fas fa-user-tie text-indigo-600 text-4xl mb-3"></i>
-                                                <p class="text-center font-black text-gray-800">Leo</p>
+                                                <i class="fas fa-user-tie text-indigo-600 text-3xl md:text-4xl mb-2 md:mb-3"></i>
+                                                <p class="text-center font-black text-gray-800 text-sm md:text-base">Leo</p>
                                             </div>
                                         </div>
                                     </label>
                                     <label class="relative cursor-pointer">
                                         <input type="radio" name="person" value="Vanessa" required class="peer sr-only">
-                                        <div class="peer-checked:border-pink-600 peer-checked:bg-gradient-to-br peer-checked:from-pink-50 peer-checked:to-pink-100 border-3 border-gray-200 rounded-2xl p-6 transition-all duration-300 hover:border-pink-300 hover:shadow-lg">
+                                        <div class="peer-checked:border-pink-600 peer-checked:bg-gradient-to-br peer-checked:from-pink-50 peer-checked:to-pink-100 border-3 border-gray-200 rounded-xl md:rounded-2xl p-4 md:p-6 transition-all duration-300 hover:border-pink-300 hover:shadow-lg">
                                             <div class="flex flex-col items-center">
-                                                <i class="fas fa-user text-pink-600 text-4xl mb-3"></i>
-                                                <p class="text-center font-black text-gray-800">Vanessa</p>
+                                                <i class="fas fa-user text-pink-600 text-3xl md:text-4xl mb-2 md:mb-3"></i>
+                                                <p class="text-center font-black text-gray-800 text-sm md:text-base">Vanessa</p>
                                             </div>
                                         </div>
                                     </label>
@@ -370,31 +381,31 @@
                             </div>
 
                             <div>
-                                <label for="amount" class="block text-sm font-black text-gray-700 mb-3 uppercase tracking-wide">
+                                <label for="amount" class="block text-xs md:text-sm font-black text-gray-700 mb-2 md:mb-3 uppercase tracking-wide">
                                     <i class="fas fa-money-bill-wave mr-2 text-green-600"></i>Jumlah
                                 </label>
                                 <div class="relative">
-                                    <span class="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-500 font-black text-lg">Rp</span>
+                                    <span class="absolute left-4 md:left-5 top-1/2 transform -translate-y-1/2 text-gray-500 font-black text-base md:text-lg">Rp</span>
                                     <input type="number" id="amount" required min="0" step="1000" 
-                                        class="w-full pl-14 pr-5 py-4 border-3 border-gray-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-300 font-bold text-lg"
+                                        class="w-full pl-12 md:pl-14 pr-4 md:pr-5 py-3 md:py-4 border-3 border-gray-200 rounded-xl md:rounded-2xl focus:ring-4 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-300 font-bold text-base md:text-lg"
                                         placeholder="50.000">
                                 </div>
                             </div>
 
                             <div>
-                                <label for="date" class="block text-sm font-black text-gray-700 mb-3 uppercase tracking-wide">
+                                <label for="date" class="block text-xs md:text-sm font-black text-gray-700 mb-2 md:mb-3 uppercase tracking-wide">
                                     <i class="fas fa-calendar mr-2 text-blue-600"></i>Tanggal
                                 </label>
                                 <input type="date" id="date" required 
-                                    class="w-full px-5 py-4 border-3 border-gray-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-300 font-semibold">
+                                    class="w-full px-4 md:px-5 py-3 md:py-4 border-3 border-gray-200 rounded-xl md:rounded-2xl focus:ring-4 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-300 font-semibold">
                             </div>
 
                             <div>
-                                <label for="category" class="block text-sm font-black text-gray-700 mb-3 uppercase tracking-wide">
+                                <label for="category" class="block text-xs md:text-sm font-black text-gray-700 mb-2 md:mb-3 uppercase tracking-wide">
                                     <i class="fas fa-tags mr-2 text-purple-600"></i>Kategori
                                 </label>
                                 <select id="category" 
-                                    class="w-full px-5 py-4 border-3 border-gray-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-300 font-semibold text-gray-700">
+                                    class="w-full px-4 md:px-5 py-3 md:py-4 border-3 border-gray-200 rounded-xl md:rounded-2xl focus:ring-4 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-300 font-semibold text-gray-700">
                                     <option value="Gaji">💼 Gaji</option>
                                     <option value="Bonus">🎁 Bonus</option>
                                     <option value="Tabungan Rutin">🔄 Tabungan Rutin</option>
@@ -404,40 +415,40 @@
                             </div>
 
                             <div>
-                                <label for="note" class="block text-sm font-black text-gray-700 mb-3 uppercase tracking-wide">
+                                <label for="note" class="block text-xs md:text-sm font-black text-gray-700 mb-2 md:mb-3 uppercase tracking-wide">
                                     <i class="fas fa-sticky-note mr-2 text-yellow-600"></i>Keterangan
                                 </label>
                                 <textarea id="note" rows="3"
-                                    class="w-full px-5 py-4 border-3 border-gray-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-300 resize-none font-medium"
+                                    class="w-full px-4 md:px-5 py-3 md:py-4 border-3 border-gray-200 rounded-xl md:rounded-2xl focus:ring-4 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-300 resize-none font-medium"
                                     placeholder="Catatan tambahan..."></textarea>
                             </div>
 
                             <button type="submit" 
-                                class="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white font-black py-5 px-6 rounded-2xl hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-3xl flex items-center justify-center space-x-3 text-lg">
-                                <i class="fas fa-cloud-upload-alt text-2xl"></i>
+                                class="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white font-black py-4 md:py-5 px-6 rounded-xl md:rounded-2xl hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-3xl flex items-center justify-center space-x-3 text-base md:text-lg">
+                                <i class="fas fa-cloud-upload-alt text-xl md:text-2xl"></i>
                                 <span>Simpan ke Cloud</span>
                             </button>
                         </form>
                     </div>
 
                     <!-- Target Settings -->
-                    <div class="glass-effect rounded-3xl p-8 border border-white/20 shadow-2xl animate-fade-in">
-                        <div class="flex items-center mb-6">
-                            <div class="bg-gradient-to-br from-emerald-600 to-teal-600 p-3 rounded-xl mr-4 shadow-lg">
-                                <i class="fas fa-flag-checkered text-white text-xl"></i>
+                    <div class="glass-effect rounded-2xl md:rounded-3xl p-6 md:p-8 border border-white/20 shadow-2xl animate-fade-in">
+                        <div class="flex items-center mb-4 md:mb-6">
+                            <div class="bg-gradient-to-br from-emerald-600 to-teal-600 p-2.5 md:p-3 rounded-xl mr-3 md:mr-4 shadow-lg">
+                                <i class="fas fa-flag-checkered text-white text-lg md:text-xl"></i>
                             </div>
-                            <h2 class="text-xl font-black text-gray-800">Target Tabungan</h2>
+                            <h2 class="text-lg md:text-xl font-black text-gray-800">Target Tabungan</h2>
                         </div>
-                        <div class="space-y-4">
+                        <div class="space-y-3 md:space-y-4">
                             <div class="relative">
-                                <span class="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-500 font-black text-lg">Rp</span>
+                                <span class="absolute left-4 md:left-5 top-1/2 transform -translate-y-1/2 text-gray-500 font-black text-base md:text-lg">Rp</span>
                                 <input type="number" id="targetAmount" value="10000000" min="0" step="100000"
-                                    class="w-full pl-14 pr-5 py-4 border-3 border-gray-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-300 font-bold text-lg"
+                                    class="w-full pl-12 md:pl-14 pr-4 md:pr-5 py-3 md:py-4 border-3 border-gray-200 rounded-xl md:rounded-2xl focus:ring-4 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-300 font-bold text-base md:text-lg"
                                     onchange="updateTarget()">
                             </div>
-                            <div class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-5 border-2 border-emerald-200">
-                                <p class="text-sm text-gray-600 text-center font-semibold mb-2">Target Anda:</p>
-                                <p class="font-black text-emerald-600 text-2xl text-center" id="targetDisplay">Rp 10.000.000</p>
+                            <div class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl md:rounded-2xl p-4 md:p-5 border-2 border-emerald-200">
+                                <p class="text-xs md:text-sm text-gray-600 text-center font-semibold mb-2">Target Anda:</p>
+                                <p class="font-black text-emerald-600 text-xl md:text-2xl text-center" id="targetDisplay">Rp 10.000.000</p>
                             </div>
                         </div>
                     </div>
@@ -445,53 +456,53 @@
                 </div>
 
                 <!-- Table Section -->
-                <div class="lg:col-span-2 space-y-6">
+                <div class="lg:col-span-2 space-y-4 md:space-y-6">
                     
                     <!-- Filter Buttons -->
-                    <div class="glass-effect rounded-3xl p-6 border border-white/20 shadow-2xl animate-fade-in">
-                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                            <div class="flex items-center space-x-3">
+                    <div class="glass-effect rounded-2xl md:rounded-3xl p-4 md:p-6 border border-white/20 shadow-2xl animate-fade-in">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-4">
+                            <div class="flex items-center space-x-2 md:space-x-3 overflow-x-auto w-full md:w-auto">
                                 <button onclick="filterData('all')" id="filterAll" 
-                                    class="filter-btn px-6 py-3 rounded-xl font-black transition-all duration-300 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg">
+                                    class="filter-btn px-4 md:px-6 py-2.5 md:py-3 rounded-xl font-black transition-all duration-300 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg whitespace-nowrap text-sm md:text-base">
                                     <i class="fas fa-list mr-2"></i>Semua
                                 </button>
                                 <button onclick="filterData('Leo')" id="filterLeo" 
-                                    class="filter-btn px-6 py-3 rounded-xl font-black transition-all duration-300 bg-gray-200 text-gray-700 hover:bg-indigo-100 hover:text-indigo-700 shadow-md">
+                                    class="filter-btn px-4 md:px-6 py-2.5 md:py-3 rounded-xl font-black transition-all duration-300 bg-gray-200 text-gray-700 hover:bg-indigo-100 hover:text-indigo-700 shadow-md whitespace-nowrap text-sm md:text-base">
                                     <i class="fas fa-user-tie mr-2"></i>Leo
                                 </button>
                                 <button onclick="filterData('Vanessa')" id="filterVanessa" 
-                                    class="filter-btn px-6 py-3 rounded-xl font-black transition-all duration-300 bg-gray-200 text-gray-700 hover:bg-pink-100 hover:text-pink-700 shadow-md">
+                                    class="filter-btn px-4 md:px-6 py-2.5 md:py-3 rounded-xl font-black transition-all duration-300 bg-gray-200 text-gray-700 hover:bg-pink-100 hover:text-pink-700 shadow-md whitespace-nowrap text-sm md:text-base">
                                     <i class="fas fa-user mr-2"></i>Vanessa
                                 </button>
                             </div>
-                            <div class="flex items-center space-x-3">
+                            <div class="flex items-center space-x-2 md:space-x-3 w-full md:w-auto">
                                 <button onclick="exportToExcel()" 
-                                    class="bg-gradient-to-r from-green-600 to-emerald-600 text-white font-black py-3 px-6 rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center space-x-2">
-                                    <i class="fas fa-file-excel text-lg"></i>
-                                    <span>Export Excel</span>
+                                    class="flex-1 md:flex-none bg-gradient-to-r from-green-600 to-emerald-600 text-white font-black py-2.5 md:py-3 px-4 md:px-6 rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 text-sm md:text-base">
+                                    <i class="fas fa-file-excel text-base md:text-lg"></i>
+                                    <span>Export</span>
                                 </button>
                                 <button onclick="clearAllData()" 
-                                    class="bg-gradient-to-r from-red-600 to-rose-600 text-white font-black py-3 px-6 rounded-xl hover:from-red-700 hover:to-rose-700 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center space-x-2">
-                                    <i class="fas fa-trash text-lg"></i>
-                                    <span class="hidden md:inline">Clear All</span>
+                                    class="flex-1 md:flex-none bg-gradient-to-r from-red-600 to-rose-600 text-white font-black py-2.5 md:py-3 px-4 md:px-6 rounded-xl hover:from-red-700 hover:to-rose-700 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 text-sm md:text-base">
+                                    <i class="fas fa-trash text-base md:text-lg"></i>
+                                    <span class="hidden sm:inline">Clear</span>
                                 </button>
                             </div>
                         </div>
                     </div>
 
                     <!-- Table -->
-                    <div class="glass-effect rounded-3xl border border-white/20 shadow-2xl overflow-hidden animate-fade-in">
-                        <div class="p-8 border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-purple-50">
-                            <div class="flex items-center justify-between">
+                    <div class="glass-effect rounded-2xl md:rounded-3xl border border-white/20 shadow-2xl overflow-hidden animate-fade-in">
+                        <div class="p-4 md:p-8 border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-purple-50">
+                            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-0">
                                 <div class="flex items-center">
-                                    <div class="bg-gradient-to-br from-indigo-600 to-pink-600 p-3 rounded-xl mr-4 shadow-lg">
-                                        <i class="fas fa-history text-white text-xl"></i>
+                                    <div class="bg-gradient-to-br from-indigo-600 to-pink-600 p-2.5 md:p-3 rounded-xl mr-3 md:mr-4 shadow-lg">
+                                        <i class="fas fa-history text-white text-lg md:text-xl"></i>
                                     </div>
-                                    <h2 class="text-2xl font-black text-gray-800">Riwayat Transaksi</h2>
+                                    <h2 class="text-xl md:text-2xl font-black text-gray-800">Riwayat Transaksi</h2>
                                 </div>
                                 <input type="text" id="searchInput" onkeyup="searchTable()" 
-                                    placeholder="🔍 Cari transaksi..."
-                                    class="px-5 py-3 border-3 border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-300 font-semibold">
+                                    placeholder="🔍 Cari..."
+                                    class="w-full md:w-auto px-4 md:px-5 py-2.5 md:py-3 border-3 border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-300 font-semibold text-sm md:text-base">
                             </div>
                         </div>
                         
@@ -499,58 +510,58 @@
                             <table class="w-full" id="savingsTable">
                                 <thead class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white">
                                     <tr>
-                                        <th class="px-6 py-5 text-left text-sm font-black uppercase tracking-wider">No</th>
-                                        <th class="px-6 py-5 text-left text-sm font-black uppercase tracking-wider">Tanggal</th>
-                                        <th class="px-6 py-5 text-left text-sm font-black uppercase tracking-wider">Nama</th>
-                                        <th class="px-6 py-5 text-left text-sm font-black uppercase tracking-wider">Kategori</th>
-                                        <th class="px-6 py-5 text-left text-sm font-black uppercase tracking-wider">Jumlah</th>
-                                        <th class="px-6 py-5 text-left text-sm font-black uppercase tracking-wider">Keterangan</th>
-                                        <th class="px-6 py-5 text-center text-sm font-black uppercase tracking-wider">Aksi</th>
+                                        <th class="px-3 md:px-6 py-3 md:py-5 text-left text-xs md:text-sm font-black uppercase tracking-wider">No</th>
+                                        <th class="px-3 md:px-6 py-3 md:py-5 text-left text-xs md:text-sm font-black uppercase tracking-wider">Tanggal</th>
+                                        <th class="px-3 md:px-6 py-3 md:py-5 text-left text-xs md:text-sm font-black uppercase tracking-wider">Nama</th>
+                                        <th class="px-3 md:px-6 py-3 md:py-5 text-left text-xs md:text-sm font-black uppercase tracking-wider">Kategori</th>
+                                        <th class="px-3 md:px-6 py-3 md:py-5 text-left text-xs md:text-sm font-black uppercase tracking-wider">Jumlah</th>
+                                        <th class="px-3 md:px-6 py-3 md:py-5 text-left text-xs md:text-sm font-black uppercase tracking-wider hidden md:table-cell">Keterangan</th>
+                                        <th class="px-3 md:px-6 py-3 md:py-5 text-center text-xs md:text-sm font-black uppercase tracking-wider">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tableBody" class="divide-y divide-gray-200 bg-white">
                                     <tr>
-                                        <td colspan="7" class="px-6 py-16 text-center">
-                                            <div class="shimmer w-full h-8 rounded mb-4"></div>
-                                            <div class="shimmer w-3/4 h-8 rounded mx-auto"></div>
-                                            <p class="text-gray-500 font-semibold mt-4">Memuat data...</p>
+                                        <td colspan="7" class="px-3 md:px-6 py-12 md:py-16 text-center">
+                                            <div class="shimmer w-full h-6 md:h-8 rounded mb-3 md:mb-4"></div>
+                                            <div class="shimmer w-3/4 h-6 md:h-8 rounded mx-auto"></div>
+                                            <p class="text-gray-500 font-semibold mt-4 text-sm md:text-base">Memuat data...</p>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
 
-                        <div class="p-6 bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200 flex justify-between items-center">
-                            <p class="text-sm text-gray-600 font-semibold">
+                        <div class="p-4 md:p-6 bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-3 md:gap-0">
+                            <p class="text-xs md:text-sm text-gray-600 font-semibold">
                                 Menampilkan <span class="font-black text-indigo-600" id="showingCount">0</span> dari <span class="font-black text-gray-800" id="totalCount">0</span> transaksi
                             </p>
                             <div class="flex items-center space-x-2 text-xs text-gray-500">
                                 <i class="fas fa-sync-alt animate-spin"></i>
-                                <span class="font-semibold">Auto-sync aktif</span>
+                                <span class="font-semibold">Auto-sync</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Monthly Summary -->
-                    <div class="glass-effect rounded-3xl p-8 border border-white/20 shadow-2xl animate-fade-in">
-                        <div class="flex items-center mb-8">
-                            <div class="bg-gradient-to-br from-blue-600 to-cyan-600 p-3 rounded-xl mr-4 shadow-lg">
-                                <i class="fas fa-chart-bar text-white text-xl"></i>
+                    <div class="glass-effect rounded-2xl md:rounded-3xl p-6 md:p-8 border border-white/20 shadow-2xl animate-fade-in">
+                        <div class="flex items-center mb-6 md:mb-8">
+                            <div class="bg-gradient-to-br from-blue-600 to-cyan-600 p-2.5 md:p-3 rounded-xl mr-3 md:mr-4 shadow-lg">
+                                <i class="fas fa-chart-bar text-white text-lg md:text-xl"></i>
                             </div>
-                            <h2 class="text-2xl font-black text-gray-800">Ringkasan Bulan Ini</h2>
+                            <h2 class="text-xl md:text-2xl font-black text-gray-800">Ringkasan Bulan Ini</h2>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-6 border-3 border-indigo-200 shadow-lg hover-scale">
-                                <p class="text-sm text-gray-600 mb-2 font-black uppercase tracking-wide">Total Bulan Ini</p>
-                                <p class="text-3xl font-black text-indigo-600" id="monthlyTotal">Rp 0</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                            <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl md:rounded-2xl p-5 md:p-6 border-3 border-indigo-200 shadow-lg hover-scale">
+                                <p class="text-xs md:text-sm text-gray-600 mb-2 font-black uppercase tracking-wide">Total Bulan Ini</p>
+                                <p class="text-2xl md:text-3xl font-black text-indigo-600" id="monthlyTotal">Rp 0</p>
                             </div>
-                            <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border-3 border-green-200 shadow-lg hover-scale">
-                                <p class="text-sm text-gray-600 mb-2 font-black uppercase tracking-wide">Transaksi Bulan Ini</p>
-                                <p class="text-3xl font-black text-green-600" id="monthlyCount">0</p>
+                            <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl md:rounded-2xl p-5 md:p-6 border-3 border-green-200 shadow-lg hover-scale">
+                                <p class="text-xs md:text-sm text-gray-600 mb-2 font-black uppercase tracking-wide">Transaksi Bulan Ini</p>
+                                <p class="text-2xl md:text-3xl font-black text-green-600" id="monthlyCount">0</p>
                             </div>
-                            <div class="bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl p-6 border-3 border-orange-200 shadow-lg hover-scale">
-                                <p class="text-sm text-gray-600 mb-2 font-black uppercase tracking-wide">Rata-rata</p>
-                                <p class="text-3xl font-black text-orange-600" id="monthlyAvg">Rp 0</p>
+                            <div class="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl md:rounded-2xl p-5 md:p-6 border-3 border-orange-200 shadow-lg hover-scale">
+                                <p class="text-xs md:text-sm text-gray-600 mb-2 font-black uppercase tracking-wide">Rata-rata</p>
+                                <p class="text-2xl md:text-3xl font-black text-orange-600" id="monthlyAvg">Rp 0</p>
                             </div>
                         </div>
                     </div>
@@ -560,15 +571,39 @@
         </div>
     </div>
 
+    <!-- PWA Install Prompt -->
+    <div id="installPrompt" class="hidden fixed bottom-20 md:bottom-24 left-4 right-4 md:left-auto md:right-8 md:max-w-md bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-5 md:p-6 rounded-2xl shadow-2xl z-50 animate-slide-up">
+        <div class="flex items-start space-x-4">
+            <div class="bg-white p-3 rounded-xl flex-shrink-0">
+                <i class="fas fa-download text-indigo-600 text-xl md:text-2xl"></i>
+            </div>
+            <div class="flex-1">
+                <h3 class="font-black text-base md:text-lg mb-2">Install Celengan Pro</h3>
+                <p class="text-sm text-indigo-100 mb-4">Install aplikasi ini untuk akses lebih cepat seperti aplikasi asli!</p>
+                <div class="flex space-x-3">
+                    <button onclick="installPWA()" class="bg-white text-indigo-600 font-bold py-2 px-5 md:px-6 rounded-xl hover:bg-indigo-50 transition text-sm md:text-base">
+                        <i class="fas fa-download mr-2"></i>Install
+                    </button>
+                    <button onclick="dismissInstall()" class="bg-indigo-500 text-white font-bold py-2 px-5 md:px-6 rounded-xl hover:bg-indigo-600 transition text-sm md:text-base">
+                        Nanti
+                    </button>
+                </div>
+            </div>
+            <button onclick="dismissInstall()" class="text-white hover:text-indigo-200 flex-shrink-0">
+                <i class="fas fa-times text-lg md:text-xl"></i>
+            </button>
+        </div>
+    </div>
+
     <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-8 right-8 bg-white rounded-2xl shadow-2xl p-6 transform translate-y-32 transition-all duration-500 border-l-4 border-green-500 hidden z-50 max-w-md">
-        <div class="flex items-center space-x-4">
-            <div class="bg-green-100 p-3 rounded-xl">
-                <i class="fas fa-check-circle text-green-500 text-3xl"></i>
+    <div id="toast" class="fixed bottom-6 md:bottom-8 right-4 md:right-8 bg-white rounded-xl md:rounded-2xl shadow-2xl p-4 md:p-6 transform translate-y-32 transition-all duration-500 border-l-4 border-green-500 hidden z-50 max-w-xs md:max-w-md">
+        <div class="flex items-center space-x-3 md:space-x-4">
+            <div class="bg-green-100 p-2.5 md:p-3 rounded-xl flex-shrink-0">
+                <i class="fas fa-check-circle text-green-500 text-2xl md:text-3xl"></i>
             </div>
             <div>
-                <p class="font-black text-gray-800 text-lg" id="toastTitle">Success!</p>
-                <p class="text-sm text-gray-600 font-semibold" id="toastMessage">Data berhasil disimpan</p>
+                <p class="font-black text-gray-800 text-base md:text-lg" id="toastTitle">Success!</p>
+                <p class="text-xs md:text-sm text-gray-600 font-semibold" id="toastMessage">Data berhasil disimpan</p>
             </div>
         </div>
     </div>
@@ -633,11 +668,77 @@
                     window.renderTable();
                     window.updateStatistics();
                 });
+
+                // Load target dari localStorage
+                const savedTarget = localStorage.getItem(`target_${user.uid}`);
+                if (savedTarget) {
+                    window.targetAmount = parseInt(savedTarget);
+                    document.getElementById('targetAmount').value = window.targetAmount;
+                    document.getElementById('targetDisplay').textContent = `Rp ${window.targetAmount.toLocaleString('id-ID')}`;
+                }
             } else {
                 window.currentUser = null;
                 document.getElementById('loginSection').classList.remove('hidden');
                 document.getElementById('mainApp').classList.add('hidden');
             }
+        });
+    </script>
+
+    <!-- PWA Installation Script -->
+    <script>
+        // PWA Install
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Tampilkan prompt setelah 3 detik
+            setTimeout(() => {
+                const installPrompt = document.getElementById('installPrompt');
+                if (installPrompt && !localStorage.getItem('pwa_dismissed')) {
+                    installPrompt.classList.remove('hidden');
+                }
+            }, 3000);
+        });
+        
+        window.installPWA = async function() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response: ${outcome}`);
+                
+                if (outcome === 'accepted') {
+                    showToast('Berhasil!', 'Aplikasi berhasil diinstall! 🎉');
+                }
+                
+                deferredPrompt = null;
+                document.getElementById('installPrompt').classList.add('hidden');
+            }
+        };
+        
+        window.dismissInstall = function() {
+            document.getElementById('installPrompt').classList.add('hidden');
+            localStorage.setItem('pwa_dismissed', 'true');
+        };
+        
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => {
+                        console.log('✅ Service Worker registered successfully:', reg.scope);
+                    })
+                    .catch(err => {
+                        console.log('❌ Service Worker registration failed:', err);
+                    });
+            });
+        }
+
+        // App installed event
+        window.addEventListener('appinstalled', (evt) => {
+            console.log('✅ PWA installed successfully!');
+            showToast('Terpasang!', 'Celengan Pro sudah terpasang di device kamu! 📱');
         });
     </script>
 
@@ -691,7 +792,6 @@
             };
 
             try {
-                // SIMPAN KE USER MASING-MASING
                 const userSavingsRef = window.firebaseDB.ref(window.firebaseDB.database, `users/${window.currentUser.uid}/savings`);
                 const newRef = window.firebaseDB.push(userSavingsRef);
                 await window.firebaseDB.set(newRef, newData);
@@ -718,10 +818,10 @@
             if (filteredData.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="px-6 py-16 text-center">
-                            <i class="fas fa-inbox text-gray-300 text-6xl mb-4"></i>
-                            <p class="text-gray-500 font-bold text-lg">Tidak ada data</p>
-                            <p class="text-gray-400 text-sm mt-2">Belum ada transaksi untuk ditampilkan</p>
+                        <td colspan="7" class="px-3 md:px-6 py-12 md:py-16 text-center">
+                            <i class="fas fa-inbox text-gray-300 text-5xl md:text-6xl mb-4"></i>
+                            <p class="text-gray-500 font-bold text-base md:text-lg">Tidak ada data</p>
+                            <p class="text-gray-400 text-xs md:text-sm mt-2">Belum ada transaksi untuk ditampilkan</p>
                         </td>
                     </tr>
                 `;
@@ -732,25 +832,25 @@
 
             tableBody.innerHTML = filteredData.map((item, index) => `
                 <tr class="hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-300 cursor-pointer border-b border-gray-100">
-                    <td class="px-6 py-5 text-gray-700 font-black">${index + 1}</td>
-                    <td class="px-6 py-5 text-gray-700 font-semibold">${formatDate(item.date)}</td>
-                    <td class="px-6 py-5">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 rounded-full ${item.person === 'Leo' ? 'bg-gradient-to-br from-indigo-100 to-indigo-200' : 'bg-gradient-to-br from-pink-100 to-pink-200'} flex items-center justify-center shadow-lg">
-                                <i class="fas ${item.person === 'Leo' ? 'fa-user-tie text-indigo-600' : 'fa-user text-pink-600'} text-lg"></i>
+                    <td class="px-3 md:px-6 py-4 md:py-5 text-gray-700 font-black text-sm md:text-base">${index + 1}</td>
+                    <td class="px-3 md:px-6 py-4 md:py-5 text-gray-700 font-semibold text-xs md:text-base whitespace-nowrap">${formatDate(item.date)}</td>
+                    <td class="px-3 md:px-6 py-4 md:py-5">
+                        <div class="flex items-center space-x-2 md:space-x-3">
+                            <div class="w-8 h-8 md:w-10 md:h-10 rounded-full ${item.person === 'Leo' ? 'bg-gradient-to-br from-indigo-100 to-indigo-200' : 'bg-gradient-to-br from-pink-100 to-pink-200'} flex items-center justify-center shadow-lg">
+                                <i class="fas ${item.person === 'Leo' ? 'fa-user-tie text-indigo-600' : 'fa-user text-pink-600'} text-sm md:text-lg"></i>
                             </div>
-                            <span class="font-black ${item.person === 'Leo' ? 'text-indigo-600' : 'text-pink-600'} text-lg">${item.person}</span>
+                            <span class="font-black ${item.person === 'Leo' ? 'text-indigo-600' : 'text-pink-600'} text-sm md:text-lg">${item.person}</span>
                         </div>
                     </td>
-                    <td class="px-6 py-5">
-                        <span class="px-4 py-2 bg-gradient-to-r from-purple-100 to-purple-200 text-purple-700 rounded-full text-xs font-black uppercase tracking-wide shadow-md">${item.category}</span>
+                    <td class="px-3 md:px-6 py-4 md:py-5">
+                        <span class="px-3 md:px-4 py-1.5 md:py-2 bg-gradient-to-r from-purple-100 to-purple-200 text-purple-700 rounded-full text-xs font-black uppercase tracking-wide shadow-md whitespace-nowrap">${item.category}</span>
                     </td>
-                    <td class="px-6 py-5 font-black text-green-600 text-lg">Rp ${item.amount.toLocaleString('id-ID')}</td>
-                    <td class="px-6 py-5 text-gray-600 max-w-xs truncate font-semibold">${item.note}</td>
-                    <td class="px-6 py-5 text-center">
+                    <td class="px-3 md:px-6 py-4 md:py-5 font-black text-green-600 text-sm md:text-lg whitespace-nowrap">Rp ${item.amount.toLocaleString('id-ID')}</td>
+                    <td class="px-3 md:px-6 py-4 md:py-5 text-gray-600 max-w-xs truncate font-semibold text-sm md:text-base hidden md:table-cell">${item.note}</td>
+                    <td class="px-3 md:px-6 py-4 md:py-5 text-center">
                         <button onclick="deleteItem('${item.firebaseId}')" 
-                            class="text-red-600 hover:bg-red-50 p-3 rounded-xl transition-all duration-300 hover:shadow-lg">
-                            <i class="fas fa-trash text-lg"></i>
+                            class="text-red-600 hover:bg-red-50 p-2 md:p-3 rounded-xl transition-all duration-300 hover:shadow-lg">
+                            <i class="fas fa-trash text-base md:text-lg"></i>
                         </button>
                     </td>
                 </tr>
@@ -857,6 +957,12 @@
         window.updateTarget = function() {
             window.targetAmount = parseInt(document.getElementById('targetAmount').value);
             document.getElementById('targetDisplay').textContent = `Rp ${window.targetAmount.toLocaleString('id-ID')}`;
+            
+            // Simpan target ke localStorage
+            if (window.currentUser) {
+                localStorage.setItem(`target_${window.currentUser.uid}`, window.targetAmount);
+            }
+            
             window.updateStatistics();
         };
 
