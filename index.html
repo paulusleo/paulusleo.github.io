@@ -166,12 +166,38 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
         }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid rgba(99, 102, 241, 0.3);
+            border-top: 3px solid #6366f1;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 min-h-screen">
     
+    <!-- LOADING SCREEN -->
+    <div id="loadingScreen" class="fixed inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center z-50">
+        <div class="text-center">
+            <div class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl floating">
+                <i class="fas fa-piggy-bank text-white text-5xl"></i>
+            </div>
+            <div class="spinner mx-auto mb-4"></div>
+            <p class="text-white text-lg font-bold">Loading...</p>
+        </div>
+    </div>
+
     <!-- LOGIN SECTION -->
-    <div id="loginSection" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+    <div id="loginSection" class="hidden min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
         <!-- Animated Background Elements -->
         <div class="absolute inset-0 overflow-hidden">
             <div class="absolute w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl -top-48 -left-48 animate-pulse"></div>
@@ -613,7 +639,7 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getDatabase, ref, push, set, onValue, remove } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
-        import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getAuth, setPersistence, browserLocalPersistence, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyAdF4TYoZvdsATfhYONwpCVeGazwUDMTDc",
@@ -631,22 +657,29 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        // Handle redirect result untuk mobile compatibility
+        // CRITICAL: Set persistence SEBELUM login
+        setPersistence(auth, browserLocalPersistence)
+            .then(() => {
+                console.log('✅ Auth persistence set to LOCAL');
+            })
+            .catch((error) => {
+                console.error('❌ Persistence error:', error);
+            });
+
+        // Handle redirect result SETELAH persistence diset
         getRedirectResult(auth)
             .then((result) => {
                 if (result && result.user) {
-                    console.log('✅ Login via redirect successful!', result.user.email);
+                    console.log('✅ Redirect login successful:', result.user.email);
                 }
             })
             .catch((error) => {
-                console.error('❌ Redirect error:', error);
-                if (error.code !== 'auth/cancelled-popup-request') {
-                    alert('Error login: ' + error.message);
-                }
+                console.error('❌ Redirect result error:', error);
             });
 
-        // IMPORTANT: Export fungsi signInWithRedirect ke window
+        // Export auth functions
         window.firebaseAuth = {
+            signInWithPopup,
             signInWithRedirect,
             signOut
         };
@@ -666,7 +699,13 @@
         window.currentFilter = 'all';
         window.targetAmount = 10000000;
 
+        // Auth State Listener
         onAuthStateChanged(auth, (user) => {
+            // Hide loading screen
+            document.getElementById('loadingScreen').classList.add('hidden');
+            
+            console.log('🔍 Auth state:', user ? `✅ ${user.email}` : '❌ Not logged in');
+            
             if (user) {
                 window.currentUser = user;
                 document.getElementById('loginSection').classList.add('hidden');
@@ -677,7 +716,7 @@
                 if (user.photoURL) {
                     document.getElementById('userAvatar').src = user.photoURL;
                 } else {
-                    document.getElementById('userAvatar').src = `https://ui-avatars.com/api/?name=${user.email}&background=6366f1&color=fff`;
+                    document.getElementById('userAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email)}&background=6366f1&color=fff`;
                 }
                 
                 const userSavingsRef = ref(database, `users/${user.uid}/savings`);
@@ -714,12 +753,26 @@
     </script>
 
     <script>
-        // Login Function - FIXED untuk mobile dengan syntax yang benar
+        // Detect device type
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+        }
+
+        // Login Function - SMART: POPUP untuk Desktop, REDIRECT untuk Mobile
         window.loginWithGoogle = async function() {
             try {
-                console.log('🔐 Attempting login with redirect...');
-                // SYNTAX BENAR untuk Firebase v10 modular
-                await window.firebaseAuth.signInWithRedirect(window.firebaseDB.auth, window.firebaseDB.provider);
+                console.log('🔐 Logging in with Google...');
+                
+                if (isMobileDevice()) {
+                    // Mobile: Use REDIRECT
+                    console.log('📱 Mobile detected, using redirect...');
+                    await window.firebaseAuth.signInWithRedirect(window.firebaseDB.auth, window.firebaseDB.provider);
+                } else {
+                    // Desktop: Use POPUP
+                    console.log('💻 Desktop detected, using popup...');
+                    const result = await window.firebaseAuth.signInWithPopup(window.firebaseDB.auth, window.firebaseDB.provider);
+                    console.log('✅ Login successful!', result.user.email);
+                }
             } catch (error) {
                 console.error('❌ Login error:', error);
                 alert('Error login: ' + error.message);
@@ -1000,8 +1053,8 @@
         // Service Worker Registration
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js')
-                .then(registration => console.log('✅ Service Worker registered:', registration))
-                .catch(error => console.log('❌ Service Worker registration failed:', error));
+                .then(registration => console.log('✅ Service Worker registered'))
+                .catch(error => console.log('❌ SW registration failed:', error));
         }
     </script>
 </body>
